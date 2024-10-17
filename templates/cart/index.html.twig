@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block javascripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}'); // Vérifie que cette variable est définie
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+            document.getElementById('create-payment-link').addEventListener('click', async () => {
+                const response = await fetch('/createpaymentlink');
+                const data = await response.json();
+                window.location.href = data.url;
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+    <style>
+        /* Style du panier */
+        .cart-container {
+            margin-top: 3rem;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        .cart-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .cart-empty {
+            text-align: center;
+            color: #7f8c8d;
+            margin-top: 2rem;
+        }
+        .cart-empty h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item-info h5 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+        .cart-item-info p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        .cart-item-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .cart-actions a, .cart-actions button {
+            margin-right: 1rem;
+        }
+        .btn-custom {
+            background-color: #1abc9c;
+            color: white;
+            border-radius: 30px;
+            padding: 0.6rem 1.5rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .btn-custom:hover {
+            background-color: #16a085;
+        }
+        .btn-remove {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+        }
+        .btn-remove:hover {
+            background-color: #c0392b;
+        }
+    </style>
+
+    <div class="container cart-container">
+        <h1 class="cart-title">Mon Panier</h1>
+
+        {% if cart|length > 0 %}
+            {% for item in cart %}
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h5>{{ item.createdApi.name }}</h5>
+                        <p>{{ item.createdApi.description }}</p>
+                    </div>
+                    <div class="cart-item-price">{{ item.createdApi.price }} €</div>
+                    <div class="cart-actions">
+                        <a href="{{ path('app_cart_remove_row', {id:item.createdApi.id}) }}" class="btn btn-remove">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg> Supprimer
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="text-center mt-4">
+                <a class="btn btn-custom" href="{{ path('app_cart_empty') }}">Vider le Panier</a>
+                <button class="btn btn-custom" id="create-payment-link">Paiement avec Stripe</button>
+            </div>
+        {% else %}
+            <div class="cart-empty">
+                <h3>Votre panier est vide</h3>
+                <p>Vous n'avez encore rien ajouté à votre panier. Explorez nos APIs et ajoutez celles qui vous intéressent.</p>
+                <a href="{{ path('app_home') }}" class="btn btn-custom">Explorer les APIs</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

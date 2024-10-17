@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+    <main class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-body p-5">
+                        {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
+
+                        {% if app.user %}
+                            <div class="alert alert-info">
+                                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" style="color: #e74c3c;">Se déconnecter</a>
+                            </div>
+                        {% else %}
+                            <h1 class="text-center mb-4" style="color: #2c3e50;">Connexion</h1>
+                            <form method="post">
+                                <div class="form-group mb-3">
+                                    <label for="inputEmail" class="form-label">Adresse e-mail</label>
+                                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placeholder="Entrez votre email" autocomplete="email" required autofocus>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="inputPassword" class="form-label">Mot de passe</label>
+                                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Entrez votre mot de passe" autocomplete="current-password" required>
+                                </div>
+
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                <button class="btn btn-lg btn-primary w-100" type="submit" style="background-color: #2c3e50; border: none;">Se connecter</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_register') }}" style="color: #2c3e50; text-decoration: none;">Pas encore inscrit ? Créez un compte ici</a>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

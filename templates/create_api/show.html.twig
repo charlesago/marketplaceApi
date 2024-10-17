@@ -1,0 +1,188 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ createdApi.name }} - API{% endblock %}
+
+{% block body %}
+    <style>
+        /* Styles de la page de l'API */
+        .api-header {
+            margin-top: 3rem;
+            text-align: center;
+            color: #2c3e50;
+        }
+        .api-header h3 {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .api-header p {
+            color: #7f8c8d;
+            font-size: 1.25rem;
+            margin-top: 1rem;
+        }
+        .api-details {
+            margin-top: 2rem;
+        }
+        .api-price, .api-requests {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .btn-primary, .btn-secondary {
+            border-radius: 30px;
+            padding: 0.7rem 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #16a085;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: #2c3e50;
+            border: 2px solid #1abc9c;
+        }
+        .btn-secondary:hover {
+            background-color: #1abc9c;
+            color: white;
+            border: 2px solid transparent;
+        }
+        /* Badge de catégorie */
+        .badge-category {
+            background-color: #1abc9c;
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        /* Barre de progression */
+        .progress {
+            height: 20px;
+            background-color: #f1f1f1;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .progress-bar {
+            background-color: #1abc9c;
+            height: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-weight: bold;
+        }
+        /* Section FAQ */
+        .faq-section {
+            margin-top: 4rem;
+        }
+        .faq-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+        .faq-item h5 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .faq-item p {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        .documentation-section {
+            margin-top: 3rem;
+        }
+        .documentation-section h4 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+        .documentation-section p {
+            font-size: 1.1rem;
+            color: #34495e;
+        }
+        .purchase-section {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info-section {
+            margin-top: 2rem;
+        }
+        .doc-link {
+            font-size: 1.2rem;
+            color: #1abc9c;
+            text-decoration: none;
+        }
+        .doc-link:hover {
+            color: #16a085;
+        }
+    </style>
+
+    <main class="container">
+        <!-- Titre de l'API -->
+        <div class="api-header">
+            <h3>{{ createdApi.name }}</h3>
+            <p>{{ createdApi.description }}</p>
+            <span class="badge-category">API populaire</span>
+        </div>
+
+        <!-- Informations de l'API -->
+        <div class="api-details row">
+            <div class="col-md-4">
+                <p class="api-price">Prix : {{ createdApi.price }} €</p>
+            </div>
+            <div class="col-md-4">
+                <p class="api-requests">Requêtes par vente : {{ createdApi.requestAmountPerSale }}</p>
+            </div>
+            <div class="col-md-4">
+                {% if app.user %}
+                    {% if app.user.profile.purchasedApis is not empty %}
+                        {% for purchasedApi in app.user.profile.purchasedApis %}
+                            {% if purchasedApi.linkApi == createdApi %}
+                                <p class="text-success">Vous possédez déjà une clé pour cette API</p>
+                            {% else %}
+                                <a href="{{ path('app_cart_add', {id: createdApi.id}) }}" class="btn btn-primary">Acheter</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <a href="{{ path('app_cart_add', {id: createdApi.id}) }}" class="btn btn-primary">Acheter</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter pour acheter</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Barre de progression pour utilisation -->
+        <div class="progress mt-4">
+            <div class="progress-bar" style="width: 70%;">70% des utilisateurs satisfaits</div>
+        </div>
+
+        <div class="row documentation-section">
+            <div class="col-md-6">
+                <h4>Documentation</h4>
+                <a href="{{ createdApi.docLink }}" class="doc-link" target="_blank">Consulter la documentation</a>
+            </div>
+            <div class="col-md-6 info-section">
+                <h4>Informations supplémentaires</h4>
+                <p>Toute Clé acheter ne sera pas remboursable ni echangable</p>
+            </div>
+        </div>
+
+
+    </main>
+{% endblock %}

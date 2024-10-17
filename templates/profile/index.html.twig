@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+    <style>
+        /* Styles généraux */
+        .profile-header {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .profile-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        /* Cartes API */
+        .card {
+            background-color: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        .card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .card-text {
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+        /* Boutons */
+        .btn {
+            border-radius: 30px;
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #16a085;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+        .empty-state {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .btn-add-api {
+            display: block;
+            margin: 2rem auto;
+            padding: 0.7rem 2rem;
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-add-api:hover {
+            background-color: #16a085;
+        }
+    </style>
+
+    <main class="container">
+        <!-- Titre de la page de profil -->
+        <div class="profile-header">
+            <h1>Mon Profil</h1>
+        </div>
+
+        <!-- Section des APIs achetées -->
+        <div>
+            <h4 class="section-title">APIs achetées :</h4>
+            {% if purchasedApis is not empty %}
+                {% for purchasedApi in purchasedApis %}
+                    <div class="card mt-3 mb-3">
+                        <div class="card-body">
+                            <div>
+                                <h5 class="card-title">{{ purchasedApi.linkApi.name }}</h5>
+                                <p class="card-text">Requêtes restantes : {{ purchasedApi.remainingRequests }}</p>
+                            </div>
+                            <div>
+                                {% if purchasedApi.remainingRequests == 0 %}
+                                    <a class="btn btn-primary" href="{{ path('app_profile_remove_purchased_api', {id:purchasedApi.id}) }}">Acheter des requêtes / Supprimer</a>
+                                {% else %}
+                                    {% if not purchasedApi.isApiKeyGenerated %}
+                                        <a class="btn btn-success" href="{{ path('app_purchased_api_generate_api_key', {id:purchasedApi.id}) }}">Générer une clé API</a>
+                                    {% else %}
+                                        <a class="btn btn-success mb-2" href="{{ path('app_purchased_api_generate_new_api_key', {id:purchasedApi.id}) }}">Nouvelle clé API</a>
+                                        <a class="btn btn-danger" href="{{ path('app_purchased_api_delete_api_key', {id:purchasedApi.id}) }}">Supprimer la clé API</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">Vous n'avez pas encore acheté d'API.</p>
+            {% endif %}
+        </div>
+
+        <!-- Bouton d'ajout d'API -->
+        <a class="btn-add-api" href="{{ path('app_create_api') }}">Ajouter une API</a>
+
+        <!-- Section des APIs créées -->
+        <div>
+            <h4 class="section-title">APIs créées :</h4>
+            {% if createdApis is not empty %}
+                {% for createdApi in createdApis %}
+                    <div class="card mt-3 mb-3">
+                        <div class="card-body">
+                            <div>
+                                <h5 class="card-title">{{ createdApi.name }}</h5>
+                                <p class="card-text">{{ createdApi.description }}</p>
+                                <a href="{{ createdApi.docLink }}" class="btn btn-info">Documentation</a>
+                            </div>
+                            <div>
+                                <a href="{{ path('app_edit_api', {id:createdApi.id}) }}" class="btn btn-warning mb-2">Modifier</a>
+                                <a href="{{ path('app_delete_api', {id:createdApi.id}) }}" class="btn btn-danger">Supprimer</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">Vous n'avez pas encore ajouté d'API.</p>
+            {% endif %}
+        </div>
+    </main>
+{% endblock %}

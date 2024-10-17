@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if edit %}
+        Modifier votre API
+    {% else %}
+        Ajouter une API
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <style>
+        /* Style général de la page */
+        .api-form-container {
+            margin-top: 3rem;
+            padding: 2.5rem;
+            background-color: #f9f9f9;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .api-form-container h1 {
+            font-size: 2.8rem;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .api-form-container p {
+            color: #7f8c8d;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Style des champs de formulaire */
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid #ced4da;
+            margin-bottom: 1.5rem;
+        }
+        .form-control:focus {
+            border-color: #1abc9c;
+            box-shadow: 0 0 8px rgba(26, 188, 156, 0.2);
+        }
+
+        /* Style des labels */
+        label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Style du bouton */
+        .btn-submit {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 2rem auto 0 auto;
+        }
+        .btn-submit:hover {
+            background-color: #16a085;
+        }
+    </style>
+
+    <main class="container">
+        <div class="api-form-container">
+            <h1>
+                {% if edit %}
+                    Modifier votre API
+                {% else %}
+                    Ajouter une API
+                {% endif %}
+            </h1>
+            <p>
+                Remplissez les informations ci-dessous pour
+                {% if edit %}
+                    mettre à jour les détails de votre API.
+                {% else %}
+                    ajouter une nouvelle API à la plateforme.
+                {% endif %}
+            </p>
+
+            <!-- Formulaire de création/édition d'API -->
+            {{ form_start(createApiForm) }}
+            {{ form_row(createApiForm.name, {'attr': {'class': 'form-control', 'placeholder': 'Nom de l\'API'}}) }}
+            {{ form_row(createApiForm.description, {'attr': {'class': 'form-control', 'placeholder': 'Description de l\'API'}}) }}
+            {{ form_row(createApiForm.docLink, {'attr': {'class': 'form-control', 'placeholder': 'Lien vers la documentation'}}) }}
+            {{ form_row(createApiForm.price, {'attr': {'class': 'form-control', 'placeholder': 'Prix en euros'}}) }}
+            {{ form_row(createApiForm.requestAmountPerSale, {'attr': {'class': 'form-control', 'placeholder': 'Nombre de requêtes par vente'}}) }}
+            {{ form_row(createApiForm.linkToApiUser, {'attr': {'class': 'form-control', 'placeholder': 'Lien vers l\'utilisateur de l\'API'}}) }}
+            {{ form_row(createApiForm.linkToApiUserDelete, {'attr': {'class': 'form-control', 'placeholder': 'Lien de suppression de l\'utilisateur'}}) }}
+            {{ form_row(createApiForm.linkToApiRequest, {'attr': {'class': 'form-control', 'placeholder': 'Lien pour effectuer une requête'}}) }}
+            {% if not edit %}
+                {{ form_row(createApiForm.apiKey, {'attr': {'class': 'form-control', 'placeholder': 'Clé API (générée automatiquement)'}}) }}
+            {% endif %}
+
+            <button type="submit" class="btn-submit">
+                {% if edit %}
+                    Mettre à jour
+                {% else %}
+                    Créer
+                {% endif %}
+            </button>
+            {{ form_end(createApiForm) }}
+        </div>
+    </main>
+{% endblock %}

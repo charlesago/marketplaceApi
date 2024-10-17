@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur le Marketplace{% endblock %}
+
+{% block body %}
+    <style>
+        /* Styles généraux */
+        .header-section {
+            text-align: center;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+        }
+        .header-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .header-section p {
+            font-size: 1.25rem;
+            color: #7f8c8d;
+        }
+        .btn-primary, .btn-secondary {
+            border-radius: 30px;
+            padding: 0.7rem 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background-color: #1abc9c;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #16a085;
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: #2c3e50;
+            border: 2px solid #1abc9c;
+        }
+        .btn-secondary:hover {
+            background-color: #1abc9c;
+            color: white;
+            border: 2px solid transparent;
+        }
+        /* Card Styles */
+        .card {
+            background-color: white;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .card-subtitle {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+        .card-text {
+            color: #34495e;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+        .btn-cart {
+            margin-right: 10px;
+        }
+        /* Section de témoignages */
+        .testimonials-section {
+            margin-top: 5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        .testimonial {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 1.5rem;
+        }
+        .testimonial strong {
+            color: #2c3e50;
+        }
+        .testimonial-author {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+
+    <main class="container marketplace-container">
+        <!-- Section d'introduction -->
+        <div class="header-section">
+            <h1>Bienvenue sur le Marketplace d'APIs</h1>
+            <p>Explorez, achetez et intégrez des APIs puissantes pour vos projets. Que vous soyez développeur ou entreprise, nous avons l'API qu'il vous faut.</p>
+            <a href="#marketplace" class="btn btn-primary">Voir les APIs</a>
+            <a href="{{ path('app_profile') }}" class="btn btn-secondary">Votre profil</a>
+        </div>
+
+        <!-- Section d'APIs -->
+        <div class="row" id="marketplace">
+            {% if apis is empty %}
+                <h2 class="empty-marketplace">Aucune API disponible pour le moment sur le marketplace.</h2>
+            {% else %}
+                <!-- Boucle sur les APIs disponibles -->
+                {% for api in apis %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ api.name }}</h5>
+                                <h6 class="card-subtitle mb-2">{{ api.price }} €</h6>
+                                <p class="card-text">{{ api.description }}</p>
+
+                                {% if app.user %}
+                                    {% if app.user.profile.purchasedApis is not empty %}
+                                        {% for purchasedApi in app.user.profile.purchasedApis %}
+                                            {% if purchasedApi.linkApi == api %}
+                                                <span class="text-success">Déjà acheté</span>
+                                            {% else %}
+                                                <a href="{{ path('app_cart_add', {id:api.id}) }}" class="btn btn-primary btn-cart">Ajouter au panier</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <a href="{{ path('app_cart_add', {id:api.id}) }}" class="btn btn-primary btn-cart">Ajouter au panier</a>
+                                    {% endif %}
+                                {% endif %}
+                                <a href="{{ path('app_create_api_show', {id:api.id}) }}" class="btn btn-secondary">Voir les détails</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+    </main>
+{% endblock %}
